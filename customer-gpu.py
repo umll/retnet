@@ -123,3 +123,30 @@ else:
 
 # 输出最终的分类器列表
 print(classifiers)
+
+
+i=1
+name, clf = classifiers[i]
+print(name)
+print(clf)
+
+# 使用 cross_val_predict 获取每个折的预测结果
+y_pred = cross_val_predict(clf, x_train, y_train, cv=10)
+
+# 计算各种评估指标并生成分类报告
+accuracy = accuracy_score(y_train, y_pred)
+precision = precision_score(y_train, y_pred, average='weighted')
+recall = recall_score(y_train, y_pred, average='weighted')
+f1 = f1_score(y_train, y_pred, average='weighted')
+report = classification_report(y_train, y_pred, output_dict=True)
+
+# 获取所有类的总支持度
+total_support = sum([v['support'] for k, v in report.items() if isinstance(v, dict)])
+
+# 打印每个模型的详细结果
+print(f"{name}:\n")
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print(f"F1 Score: {f1:.4f}")
+print(f"Classification Report:\n {pd.DataFrame(report).transpose()}\n")
